@@ -1,52 +1,41 @@
-export DEBIAN_FRONTEND=noninteractive
-apt update
-apt install -y curl tftpd-hpa nginx
+#!/bin/sh
 
-echo '<h1>Render VPN Server</h1>' > /var/www/html/index.html
-echo 'server { listen 80; server_name _; root /var/www/html; index index.html; }' > /etc/nginx/sites-available/default
-systemctl enabl#!/bin/bash
-
-# Установка Nginx (для Render Web Service)
+# Установка Nginx для Alpine
 echo "Устанавливаем Nginx..."
-apt-get update && apt-get install -y nginx
-echo "<h1>Render VPN Server</h1>" > /var/www/html/index.html
-service nginx start
+apk add nginx
+mkdir -p /var/www/html
+echo '<h1>Render VPN Server</h1>' > /var/www/html/index.html
 
-# Установка Tailscale
+# Конфиг Nginx для Alpine
+cat > /etc/nginx/nginx.conf <<EOF
+events {}
+http {
+    server {
+        listen 80;
+        root /var/www/html;
+        index index.html;
+    }
+}
+EOF
+
+# Запуск Nginx
+nginx
+
+# Установка Tailscale (без прав root)
 echo "Устанавливаем Tailscale..."
-curl -fsSL https://tailscale.com/install.sh | sh
+apk add tailscale
+tailscaled --state=/var/lib/tailscale/tailscaled.state &
 tailscale up --authkey $TAILSCALE_AUTH_KEY
 
-# TFTP-сервер (используем busybox)
+# TFTP-сервер через busybox
 echo "Настраиваем TFTP-сервер..."
-mkdir -p /var/tftpboot
-chmod 777 /var/tftpboot
-echo "Test file" > /var/tftpboot/test.txt
-busybox udpsvd -E 0 69 busybox tftpd /var/tftpboot &
+mkdir -p /home/render/tftpboot
+echo "Test file" > /home/render/tftpboot/test.txt
+busybox udpsvd -E 0:69 busybox tftpd /home/render/tftpboot &
 
-# Keep-alive скрипт
+# Keep-alive без фонового режима
 echo "Запускаем keep-alive..."
 while true; do
   ping -c 1 8.8.8.8
   sleep 300
-donee nginx
-systemctl start nginx
-
-curl -fsSL https://tailscale.com/install.sh | sh
-systemctl enable tailscaled
-tailscale up --authkey $TAILSCALE_AUTH_KEY
-
-mkdir /var/lib/tftpboot
-chmod 777 /var/lib/tftpboot
-echo 'TFTP_USERNAME="tftp"\nTFTP_DIRECTORY="/var/lib/tftpboot"\nTFTP_ADDRESS=":69"\nTFTP_OPTIONS="--secure"' > /etc/default/tftpd-hpa
-echo "Test file" > /var/lib/tftpboot/test.txt
-systemctl enable tftpd-hpa
-systemctl restart tftpd-hpa
-
-echo "while true; do ping -c 1 8.8.8.8; sleep 300; done" > /keep-alive.sh
-chmod +x /keep-alive.sh
-nohup /keep-alive.sh &
-
-ufw allow 80/tcp
-ufw allow 69/udp
-ufw allow 41641/udp
+done

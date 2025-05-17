@@ -1,11 +1,10 @@
 services:
   - type: web
     name: tftp-tailscale-server
-    env: node
+    env: docker
     region: frankfurt
     plan: free
-    buildCommand: yarn install
-    startCommand: bash ./setup.sh
+    dockerfilePath: Dockerfile
     envVars:
       - key: TAILSCALE_AUTH_KEY
         value: tskey-auth-k5oX7kEuHT11CNTRL-dy6Bnv7rMaJP4bY5XBTLaJTBSn89QyUvb

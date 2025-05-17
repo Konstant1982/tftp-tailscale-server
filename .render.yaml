@@ -7,7 +7,7 @@ services:
     dockerfilePath: Dockerfile
     envVars:
       - key: TAILSCALE_AUTH_KEY
-        value: tskey-auth-ky3ZuRFENt11CNTRL-d4Q2KwMnAA537StqnqNEA5NVKU3oB1L2
+        value: tskey-auth-khaUFJD51D21CNTRL-2o4FYaTfsZVzs9QSkYevZVsW7N3wTqV2
     ports:
       - port: 80
         protocol: TCP

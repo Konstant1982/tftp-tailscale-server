@@ -5,7 +5,8 @@ RUN apk add --no-cache \
     nginx \
     tailscale \
     busybox \
-    curl
+    curl \
+    tftp-hpa
 
 # Создание непривилегированного пользователя
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup

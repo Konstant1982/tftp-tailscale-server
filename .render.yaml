@@ -2,23 +2,7 @@ services:
   - type: web
     name: tftp-tailscale-server
     env: docker
-    region: frservices:
-  - type: web
-    name: tftp-tailscale-server
-    env: docker
     region: frankfurt
-    plan: free
-    dockerfilePath: Dockerfile
-    envVars:
-      - key: TAILSCALE_AUTH_KEY
-        value: tskey-auth-k5oX7kEuHT11CNTRL-dy6Bnv7rMaJP4bY5XBTLaJTBSn89QyUvb
-    ports:
-      - port: 80
-        protocol: TCP
-      - port: 69
-        protocol: UDP
-      - port: 41641
-        protocol: UDPankfurt
     plan: free
     dockerfilePath: Dockerfile
     envVars:

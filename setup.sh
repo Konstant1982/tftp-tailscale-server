@@ -15,18 +15,19 @@ http {
 EOF
 nginx -g "daemon off;" &
 
-# Tailscale
+# Tailscale (userspace-режим)
 mkdir -p /var/lib/tailscale
-tailscaled --state=/var/lib/tailscale/tailscaled.state &
+tailscaled --tun=userspace-networking --state=/var/lib/tailscale/tailscaled.state &
 sleep 5  # Даем демону время на запуск
 tailscale up --authkey "$TAILSCALE_AUTH_KEY"
 
 # TFTP-сервер
 mkdir -p /tftpboot
+chmod 777 /tftpboot
 echo "Test file" > /tftpboot/test.txt
-busybox udpsvd -E 0 69 busybox tftpd /tftpboot &
+in.tftpd --foreground --port 69 --secure /tftpboot &
 
-# Keep-alive (заменяем ping на curl)
+# Keep-alive
 while true; do
   curl -s http://localhost || true
   sleep 300

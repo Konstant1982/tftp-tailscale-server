@@ -1,10 +1,10 @@
 services:
   - type: web
     name: tftp-tailscale-server
-    env: node # Будем использовать для запуска скрипта
-    region: frankfurt # или oregon
+    env: node
+    region: frankfurt
     plan: free
-    startCommand: bash setup.sh
+    startCommand: ./setup.sh
     envVars:
       - key: TAILSCALE_AUTH_KEY
-        value: tskey-xxxx # Замените на ваш ключ
+        value: tskey-auth-k5oX7kEuHT11CNTRL-dy6Bnv7rMaJP4bY5XBTLaJTBSn89QyUvb

@@ -4,7 +4,11 @@ FROM alpine:latest
 RUN apk add --no-cache \
     nginx \
     tailscale \
-    busybox  # Убрали bash
+    busybox \
+    curl
+
+# Создание непривилегированного пользователя
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh

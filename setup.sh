@@ -13,20 +13,21 @@ http {
     }
 }
 EOF
-nginx
+nginx -g "daemon off;" &
 
 # Tailscale
-tailscaled --state=/var/lib/tailscale/tailscaled.state > /dev/null 2>&1 &
+mkdir -p /var/lib/tailscale
+tailscaled --state=/var/lib/tailscale/tailscaled.state &
 sleep 5  # Даем демону время на запуск
-tailscale up --authkey $TAILSCALE_AUTH_KEY
+tailscale up --authkey "$TAILSCALE_AUTH_KEY"
 
 # TFTP-сервер
 mkdir -p /tftpboot
 echo "Test file" > /tftpboot/test.txt
-busybox udpsvd -E 0:69 busybox tftpd /tftpboot > /dev/null 2>&1 &
+busybox udpsvd -E 0 69 busybox tftpd /tftpboot &
 
-# Keep-alive
+# Keep-alive (заменяем ping на curl)
 while true; do
-  ping -c 1 8.8.8.8 > /dev/null
+  curl -s http://localhost || true
   sleep 300
 done

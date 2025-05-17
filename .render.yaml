@@ -4,8 +4,15 @@ services:
     env: node
     region: frankfurt
     plan: free
-    buildCommand: ""
+    buildCommand: yarn install
     startCommand: bash ./setup.sh
     envVars:
       - key: TAILSCALE_AUTH_KEY
         value: tskey-auth-k5oX7kEuHT11CNTRL-dy6Bnv7rMaJP4bY5XBTLaJTBSn89QyUvb
+    ports:
+      - port: 80
+        protocol: TCP
+      - port: 69
+        protocol: UDP
+      - port: 41641
+        protocol: UDP

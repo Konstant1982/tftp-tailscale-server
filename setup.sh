@@ -16,17 +16,17 @@ EOF
 nginx
 
 # Tailscale
-tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/var/run/tailscale/tailscaled.sock &
-sleep 15  # Увеличенная задержка для инициализации
-tailscale up --authkey=$TAILSCALE_AUTH_KEY --hostname=render-vpn
+tailscaled --state=/var/lib/tailscale/tailscaled.state > /dev/null 2>&1 &
+sleep 5  # Даем демону время на запуск
+tailscale up --authkey $TAILSCALE_AUTH_KEY
 
 # TFTP-сервер
 mkdir -p /tftpboot
 echo "Test file" > /tftpboot/test.txt
-busybox udpsvd -E 0:69 busybox tftpd /tftpboot &
+busybox udpsvd -E 0:69 busybox tftpd /tftpboot > /dev/null 2>&1 &
 
 # Keep-alive
 while true; do
-  wget -qO- http://google.com >/dev/null 2>&1 || true
+  ping -c 1 8.8.8.8 > /dev/null
   sleep 300
 done

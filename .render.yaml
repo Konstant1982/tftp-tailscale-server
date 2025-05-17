@@ -4,7 +4,8 @@ services:
     env: node
     region: frankfurt
     plan: free
-    startCommand: ./setup.sh
+    buildCommand: ""
+    startCommand: bash ./setup.sh
     envVars:
       - key: TAILSCALE_AUTH_KEY
         value: tskey-auth-k5oX7kEuHT11CNTRL-dy6Bnv7rMaJP4bY5XBTLaJTBSn89QyUvb

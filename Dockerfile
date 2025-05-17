@@ -1,10 +1,10 @@
 FROM alpine:latest
 
-# Установка зависимостей
 RUN apk add --no-cache \
     nginx \
     tailscale \
-    busybox  # Убрали bash
+    busybox \
+    wget  # Добавляем wget вместо curl
 
 COPY setup.sh /setup.sh
 RUN chmod +x /setup.sh

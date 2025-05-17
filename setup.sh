@@ -4,7 +4,32 @@ apt install -y curl tftpd-hpa nginx
 
 echo '<h1>Render VPN Server</h1>' > /var/www/html/index.html
 echo 'server { listen 80; server_name _; root /var/www/html; index index.html; }' > /etc/nginx/sites-available/default
-systemctl enable nginx
+systemctl enabl#!/bin/bash
+
+# Установка Nginx (для Render Web Service)
+echo "Устанавливаем Nginx..."
+apt-get update && apt-get install -y nginx
+echo "<h1>Render VPN Server</h1>" > /var/www/html/index.html
+service nginx start
+
+# Установка Tailscale
+echo "Устанавливаем Tailscale..."
+curl -fsSL https://tailscale.com/install.sh | sh
+tailscale up --authkey $TAILSCALE_AUTH_KEY
+
+# TFTP-сервер (используем busybox)
+echo "Настраиваем TFTP-сервер..."
+mkdir -p /var/tftpboot
+chmod 777 /var/tftpboot
+echo "Test file" > /var/tftpboot/test.txt
+busybox udpsvd -E 0 69 busybox tftpd /var/tftpboot &
+
+# Keep-alive скрипт
+echo "Запускаем keep-alive..."
+while true; do
+  ping -c 1 8.8.8.8
+  sleep 300
+donee nginx
 systemctl start nginx
 
 curl -fsSL https://tailscale.com/install.sh | sh

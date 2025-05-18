@@ -15,3 +15,5 @@ services:
         protocol: UDP
       - port: 41641
         protocol: UDP
+      - port: 3478
+        protocol: UDP

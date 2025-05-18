@@ -26,7 +26,7 @@ TAILSCALED_PID=$!
 sleep 5  # Даем демону время на запуск
 
 # Проверка, что tailscaled работает
-if ! ps -p $TAILSCALED_PID > /dev/null; then
+if ! ps | grep -q "[t]ailscaled"; then
     echo "Error: tailscaled failed to start. Check logs."
     exit 1
 fi
@@ -53,7 +53,7 @@ fi
 if [ -f /kernel_x86_64.elf ]; then
     cp /kernel_x86_64.elf /tftpboot/fs/kernel_x86_64.elf
     cp /kernel_x86_64.elf /var/www/html/fs/kernel_x86_64.elf
-    chmod 777 /tftpboot/fs/kernel_x86_64.elf /var/www/html/fs/kernel_x86_64.elf
+    chmod 777 /tftpboot/fs/kernel_x86_64.elf /var/www/html/fs/kernel_x64.elf
 else
     echo "Error: /kernel_x86_64.elf not found in container"
 fi

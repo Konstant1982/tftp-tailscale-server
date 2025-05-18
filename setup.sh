@@ -21,10 +21,22 @@ nginx -g "daemon off;" &
 # Tailscale (userspace-режим)
 mkdir -p /var/lib/tailscale
 echo "Starting tailscaled..."
-tailscaled --tun=userspace-networking --state=/var/lib/tailscale/tailscaled.state --verbose=1 --port 41641 &
+tailscaled --tun=userspace-networking --state=/var/lib/tailscale/tailscaled.state --port 41641 --verbose=1 &
+TAILSCALED_PID=$!
 sleep 5  # Даем демону время на запуск
+
+# Проверка, что tailscaled работает
+if ! ps -p $TAILSCALED_PID > /dev/null; then
+    echo "Error: tailscaled failed to start. Check logs."
+    exit 1
+fi
+
 echo "Running tailscale up..."
 tailscale up --authkey "$TAILSCALE_AUTH_KEY" --accept-dns=false --advertise-exit-node
+if [ $? -ne 0 ]; then
+    echo "Error: tailscale up failed. Check network or auth key."
+    exit 1
+fi
 tailscale status || echo "Tailscale status check failed"
 
 # TFTP-сервер

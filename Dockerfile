@@ -12,6 +12,10 @@ RUN apk add --no-cache \
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 COPY setup.sh /setup.sh
+
+COPY fs/kernel_x86_64.efi /kernel_x86_64.efi
+COPY fs/kernel_x86_64.elf /kernel_x86_64.elf
+
 RUN chmod +x /setup.sh
 
 EXPOSE 80/tcp
